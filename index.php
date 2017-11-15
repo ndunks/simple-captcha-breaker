@@ -10,9 +10,22 @@
 	<tr><th>No</th><th>Captcha</th><th>Text</th></tr>
 <?php
 $url	= "http://hj.bola88.com/Public/img.aspx?r=437035075";
+function getImage( $url )
+{
+	if( ini_get('allow_url_fopen') ) {
+	   return file_get_contents($url);
+	}else{ //Use CURL
+		$ch			= curl_init($url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$stream	= curl_exec($ch);
+		curl_close($ch);
+		return $stream;
+	}
+}
+
 include __DIR__ . '/captcha-breaker.php';
 for($i = 1; $i <= 10; $i++){
-	$stream	= file_get_contents($url);
+	$stream	= getImage( $url );
 	$img	= imagecreatefromstring($stream);
 	if(!$img){
 		echo '<h3>Fail read image</h3>';
